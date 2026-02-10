@@ -102,6 +102,22 @@ h1 {
   transform: translateX(-50%) translateY(0);
 }
 
+footer {
+  text-align: center;
+  padding: 2rem 0 1rem;
+  font-size: 0.8rem;
+  color: #bbb;
+}
+
+footer a {
+  color: #bbb;
+  text-decoration: underline;
+}
+
+footer a:hover {
+  color: #888;
+}
+
 @media (max-width: 480px) {
   .container {
     padding: 1rem 0.5rem;
