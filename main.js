@@ -99,5 +99,17 @@ function showToast() {
   toastTimer = setTimeout(() => toast.classList.remove('show'), 1500)
 }
 
+// Version display
+const versionEl = document.getElementById('version')
+const versionText = `v${__APP_VERSION__}-${__GIT_SHA__}`
+if (__GIT_SHA_FULL__) {
+  const link = document.createElement('a')
+  link.href = `https://github.com/nearwood/emojiquicker/commit/${__GIT_SHA_FULL__}`
+  link.textContent = versionText
+  versionEl.appendChild(link)
+} else {
+  versionEl.textContent = versionText
+}
+
 // Initial state
 render('')
