@@ -1,115 +1,115 @@
-import emojis from 'emojibase-data/en/compact.json'
-import './style.css'
+import emojis from 'emojibase-data/en/compact.json';
+import './style.css';
 
-const searchInput = document.getElementById('search')
-const grid = document.getElementById('emoji-grid')
-const resultCount = document.getElementById('result-count')
-const toast = document.getElementById('toast')
+const searchInput = document.getElementById('search');
+const grid = document.getElementById('emoji-grid');
+const resultCount = document.getElementById('result-count');
+const toast = document.getElementById('toast');
 
 // Pre-filter to emojis that have an order (real emojis, not components/regional indicators)
 const allEmojis = emojis
   .filter(e => e.order != null)
-  .sort((a, b) => a.order - b.order)
+  .sort((a, b) => a.order - b.order);
 
-const MRU_KEY = 'emojiquicker-mru'
-const MRU_MAX = 32
+const MRU_KEY = 'emojiquicker-mru';
+const MRU_MAX = 32;
 
 function getMru() {
   try {
-    return JSON.parse(localStorage.getItem(MRU_KEY)) || []
+    return JSON.parse(localStorage.getItem(MRU_KEY)) || [];
   } catch {
-    return []
+    return [];
   }
 }
 
 function addToMru(emoji) {
-  const mru = getMru().filter(e => e !== emoji)
-  mru.unshift(emoji)
-  localStorage.setItem(MRU_KEY, JSON.stringify(mru.slice(0, MRU_MAX)))
+  const mru = getMru().filter(e => e !== emoji);
+  mru.unshift(emoji);
+  localStorage.setItem(MRU_KEY, JSON.stringify(mru.slice(0, MRU_MAX)));
 }
 
-const clearBtn = document.getElementById('clear-btn')
-let debounceTimer = null
+const clearBtn = document.getElementById('clear-btn');
+let debounceTimer = null;
 
 function updateClearBtn() {
-  clearBtn.hidden = !searchInput.value
+  clearBtn.hidden = !searchInput.value;
 }
 
 searchInput.addEventListener('input', () => {
-  updateClearBtn()
-  clearTimeout(debounceTimer)
-  debounceTimer = setTimeout(() => render(searchInput.value.trim().toLowerCase()), 150)
-})
+  updateClearBtn();
+  clearTimeout(debounceTimer);
+  debounceTimer = setTimeout(() => render(searchInput.value.trim().toLowerCase()), 150);
+});
 
 clearBtn.addEventListener('click', () => {
-  searchInput.value = ''
-  updateClearBtn()
-  render('')
-  searchInput.focus()
-})
+  searchInput.value = '';
+  updateClearBtn();
+  render('');
+  searchInput.focus();
+});
 
 grid.addEventListener('click', (e) => {
-  const btn = e.target.closest('.emoji-btn')
-  if (!btn) return
-  const emoji = btn.textContent
+  const btn = e.target.closest('.emoji-btn');
+  if (!btn) return;
+  const emoji = btn.textContent;
   navigator.clipboard.writeText(emoji).then(() => {
-    addToMru(emoji)
-    showToast()
-    if (!searchInput.value.trim()) render('')
-  })
-})
+    addToMru(emoji);
+    showToast();
+    if (!searchInput.value.trim()) render('');
+  });
+});
 
 function render(query) {
   if (!query) {
-    const mru = getMru()
+    const mru = getMru();
     if (mru.length === 0) {
-      resultCount.textContent = ''
-      grid.innerHTML = '<div class="prompt">Type to search emojis</div>'
-      return
+      resultCount.textContent = '';
+      grid.innerHTML = '<div class="prompt">Type to search emojis</div>';
+      return;
     }
-    resultCount.textContent = 'Recently used'
+    resultCount.textContent = 'Recently used';
     grid.innerHTML = mru
       .map(e => `<button class="emoji-btn">${e}</button>`)
-      .join('')
-    return
+      .join('');
+    return;
   }
 
   const results = allEmojis.filter(e => {
-    if (e.label.includes(query)) return true
-    if (e.tags && e.tags.some(t => t.includes(query))) return true
-    return false
-  })
+    if (e.label.includes(query)) return true;
+    if (e.tags && e.tags.some(t => t.includes(query))) return true;
+    return false;
+  });
 
-  resultCount.textContent = `${results.length} result${results.length === 1 ? '' : 's'}`
+  resultCount.textContent = `${results.length} result${results.length === 1 ? '' : 's'}`;
 
   if (results.length === 0) {
-    grid.innerHTML = '<div class="prompt">No emojis found</div>'
-    return
+    grid.innerHTML = '<div class="prompt">No emojis found</div>';
+    return;
   }
 
   grid.innerHTML = results
     .map(e => `<button class="emoji-btn" title="${e.label}">${e.unicode}</button>`)
-    .join('')
+    .join('');
 }
 
-let toastTimer = null
+let toastTimer = null;
 function showToast() {
-  clearTimeout(toastTimer)
-  toast.classList.add('show')
-  toastTimer = setTimeout(() => toast.classList.remove('show'), 1500)
+  clearTimeout(toastTimer);
+  toast.classList.add('show');
+  toastTimer = setTimeout(() => toast.classList.remove('show'), 1500);
 }
 
 // Version display
-const versionEl = document.getElementById('version')
-const versionText = `v${__APP_VERSION__}-${__GIT_SHA__}`
+const versionEl = document.getElementById('version');
+const versionText = `v${__APP_VERSION__}-${__GIT_SHA__}`;
 if (__GIT_SHA_FULL__) {
-  const link = document.createElement('a')
-  link.href = `https://github.com/nearwood/emojiquicker/commit/${__GIT_SHA_FULL__}`
-  link.textContent = versionText
-  versionEl.appendChild(link)
+  const link = document.createElement('a');
+  link.href = `https://github.com/nearwood/emojiquicker/commit/${__GIT_SHA_FULL__}`;
+  link.textContent = versionText;
+  versionEl.appendChild(link);
 } else {
-  versionEl.textContent = versionText
+  versionEl.textContent = versionText;
 }
 
 // Initial state
-render('')
+render('');
