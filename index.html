@@ -9,12 +9,15 @@
   <body>
     <div class="container">
       <h1>Emojiquicker</h1>
-      <input
-        type="text"
-        id="search"
-        placeholder="Search emojis..."
-        autofocus
-      />
+      <div class="search-wrap">
+        <input
+          type="text"
+          id="search"
+          placeholder="Search emojis..."
+          autofocus
+        />
+        <button id="clear-btn" type="button" aria-label="Clear search" hidden>&times;</button>
+      </div>
       <div id="result-count"></div>
       <div id="emoji-grid"></div>
     </div>

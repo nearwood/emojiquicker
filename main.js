@@ -28,11 +28,24 @@ function addToMru(emoji) {
   localStorage.setItem(MRU_KEY, JSON.stringify(mru.slice(0, MRU_MAX)))
 }
 
+const clearBtn = document.getElementById('clear-btn')
 let debounceTimer = null
 
+function updateClearBtn() {
+  clearBtn.hidden = !searchInput.value
+}
+
 searchInput.addEventListener('input', () => {
+  updateClearBtn()
   clearTimeout(debounceTimer)
   debounceTimer = setTimeout(() => render(searchInput.value.trim().toLowerCase()), 150)
+})
+
+clearBtn.addEventListener('click', () => {
+  searchInput.value = ''
+  updateClearBtn()
+  render('')
+  searchInput.focus()
 })
 
 grid.addEventListener('click', (e) => {
