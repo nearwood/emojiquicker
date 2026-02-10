@@ -1,4 +1,5 @@
 # TODO
 
 - [x] "Made with" links
-- [ ] MRU list, stored in localstorage/cookie
+- [x] MRU list, stored in localstorage/cookie
+- [ ] Clear search button

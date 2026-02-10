@@ -11,6 +11,23 @@ const allEmojis = emojis
   .filter(e => e.order != null)
   .sort((a, b) => a.order - b.order)
 
+const MRU_KEY = 'emojiquicker-mru'
+const MRU_MAX = 32
+
+function getMru() {
+  try {
+    return JSON.parse(localStorage.getItem(MRU_KEY)) || []
+  } catch {
+    return []
+  }
+}
+
+function addToMru(emoji) {
+  const mru = getMru().filter(e => e !== emoji)
+  mru.unshift(emoji)
+  localStorage.setItem(MRU_KEY, JSON.stringify(mru.slice(0, MRU_MAX)))
+}
+
 let debounceTimer = null
 
 searchInput.addEventListener('input', () => {
@@ -21,13 +38,26 @@ searchInput.addEventListener('input', () => {
 grid.addEventListener('click', (e) => {
   const btn = e.target.closest('.emoji-btn')
   if (!btn) return
-  navigator.clipboard.writeText(btn.textContent).then(() => showToast())
+  const emoji = btn.textContent
+  navigator.clipboard.writeText(emoji).then(() => {
+    addToMru(emoji)
+    showToast()
+    if (!searchInput.value.trim()) render('')
+  })
 })
 
 function render(query) {
   if (!query) {
-    resultCount.textContent = ''
-    grid.innerHTML = '<div class="prompt">Type to search emojis</div>'
+    const mru = getMru()
+    if (mru.length === 0) {
+      resultCount.textContent = ''
+      grid.innerHTML = '<div class="prompt">Type to search emojis</div>'
+      return
+    }
+    resultCount.textContent = 'Recently used'
+    grid.innerHTML = mru
+      .map(e => `<button class="emoji-btn">${e}</button>`)
+      .join('')
     return
   }
 
