@@ -1,6 +1,6 @@
 # Emojiquicker
 
-https://emojipicker.com
+https://emojiquicker.com
 
 A fast, simple emoji picker. Type a keyword, see matching emojis, click to copy.
 
